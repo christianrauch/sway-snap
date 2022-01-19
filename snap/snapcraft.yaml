@@ -61,7 +61,13 @@ parts:
     plugin: meson
     meson-parameters:
     - -Dxwayland=disabled
-    - -Dexamples=false
+    # - -Dexamples=false
+    override-build: |
+      snapcraftctl build
+      cp ${SNAPCRAFT_PART_BUILD}/tinywl/tinywl ${SNAPCRAFT_STAGE}/usr/local/bin/
+    # override-stage: |
+    #   snapcraftctl stage
+    #   cp ${SNAPCRAFT_PART_BUILD}/tinywl/tinywl ${SNAPCRAFT_STAGE}/bin/
     build-packages:
     - libdrm-dev
     - libgbm-dev
@@ -122,8 +128,11 @@ parts:
     after: [sway]
     plugin: nil
     override-prime: |
+      cp ${SNAPCRAFT_STAGE}/usr/local/bin/tinywl ${SNAPCRAFT_PRIME}/usr/local/bin/tinywl
       echo -e "#!/usr/bin/bash\nseatd-launch -- sway" > sway-launch
       chmod +x sway-launch
+      echo -e "#!/usr/bin/bash\nseatd-launch -- tinywl" > tinywl-launch
+      chmod +x tinywl-launch
 
 apps:
   sway:
@@ -131,6 +140,16 @@ apps:
     command: sway-launch
     environment:
       # LD_LIBRARY_PATH: ${SNAP}/usr/local/lib/${SNAP_ARCH_TRIPLET}
+      LD_LIBRARY_PATH: ${SNAP}/usr/local/lib/x86_64-linux-gnu
+      PATH: ${SNAP}/usr/local/bin
+    plugs:
+    - login-session-control
+    - x11
+    - wayland
+
+  tinywl:
+    command: tinywl-launch
+    environment:
       LD_LIBRARY_PATH: ${SNAP}/usr/local/lib/x86_64-linux-gnu
       PATH: ${SNAP}/usr/local/bin
     plugs:

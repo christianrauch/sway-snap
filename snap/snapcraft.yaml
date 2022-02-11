@@ -5,8 +5,8 @@ summary: i3-compatible Wayland compositor
 description: |
   sway is an i3-compatible Wayland compositor.
 
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+grade: stable
+confinement: classic # use 'strict' once you have the right plugs and slots
 
 parts:
   build-deps:
@@ -129,9 +129,9 @@ parts:
     plugin: nil
     override-prime: |
       cp ${SNAPCRAFT_STAGE}/usr/local/bin/tinywl ${SNAPCRAFT_PRIME}/usr/local/bin/tinywl
-      echo -e "#!/usr/bin/bash\nseatd-launch -- sway" > sway-launch
+      echo -e "#!/usr/bin/bash\nexport SEATD_LOGLEVEL=debug\nseatd-launch -- sway" > sway-launch
       chmod +x sway-launch
-      echo -e "#!/usr/bin/bash\nseatd-launch -- tinywl" > tinywl-launch
+      echo -e "#!/usr/bin/bash\nexport SEATD_LOGLEVEL=debug\nseatd-launch -- tinywl" > tinywl-launch
       chmod +x tinywl-launch
 
 apps:

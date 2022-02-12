@@ -129,19 +129,16 @@ parts:
     plugin: nil
     override-prime: |
       cp ${SNAPCRAFT_STAGE}/usr/local/bin/tinywl ${SNAPCRAFT_PRIME}/usr/local/bin/tinywl
-      echo -e "#!/usr/bin/bash\nexport SEATD_LOGLEVEL=debug\nseatd-launch -- sway" > sway-launch
-      chmod +x sway-launch
-      echo -e "#!/usr/bin/bash\nexport SEATD_LOGLEVEL=debug\nseatd-launch -- tinywl" > tinywl-launch
-      chmod +x tinywl-launch
+      echo -e "#!/usr/bin/bash\nexport SEATD_LOGLEVEL=debug\nseatd-launch -- sway" > usr/local/bin/sway-launch
+      chmod +x usr/local/bin/sway-launch
+      echo -e "#!/usr/bin/bash\nwhich seatd\nexport SEATD_LOGLEVEL=debug\nseatd-launch -- tinywl" > usr/local/bin/tinywl-launch
+      chmod +x usr/local/bin/tinywl-launch
 
 apps:
   sway:
-    # command: usr/local/bin/sway
     command: sway-launch
     environment:
-      # LD_LIBRARY_PATH: ${SNAP}/usr/local/lib/${SNAP_ARCH_TRIPLET}
-      LD_LIBRARY_PATH: ${SNAP}/usr/local/lib/x86_64-linux-gnu
-      PATH: ${SNAP}/usr/local/bin
+      PATH: ${SNAP}/usr/local/bin:$PATH
     plugs:
     - login-session-control
     - x11
@@ -150,8 +147,7 @@ apps:
   tinywl:
     command: tinywl-launch
     environment:
-      LD_LIBRARY_PATH: ${SNAP}/usr/local/lib/x86_64-linux-gnu
-      PATH: ${SNAP}/usr/local/bin
+      PATH: ${SNAP}/usr/local/bin:$PATH
     plugs:
     - login-session-control
     - x11
